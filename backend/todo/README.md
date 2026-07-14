@@ -6,16 +6,16 @@ blocking I/O anywhere on the request path).
 
 ## Stack
 
-| Concern         | Choice                                                        |
-|-----------------|----------------------------------------------------------------|
-| Language        | Kotlin 2.3.21, JVM toolchain 25                                |
-| Framework       | Spring Boot 4.1.0 (WebFlux, reactive)                          |
+| Concern         | Choice                                                                |
+|-----------------|-----------------------------------------------------------------------|
+| Language        | Kotlin 2.3.21, JVM toolchain 24                                       |
+| Framework       | Spring Boot 4.1.0 (WebFlux, reactive)                                 |
 | Database        | MongoDB, via Spring Data Reactive MongoDB (`CoroutineCrudRepository`) |
-| Auth            | Stateless JWT (jjwt 0.12.6), BCrypt password hashing            |
-| Realtime        | Plain reactive WebSocket at `/ws/sync` (not STOMP — see below) |
-| Docs            | springdoc-openapi (Swagger UI)                                 |
-| Build           | Gradle Kotlin DSL                                               |
-| Tests           | JUnit 5, MockK, kotlinx-coroutines-test, Reactor `StepVerifier` |
+| Auth            | Stateless JWT (jjwt 0.12.6), BCrypt password hashing                  |
+| Realtime        | Plain reactive WebSocket at `/ws/sync` (not STOMP — see below)        |
+| Docs            | springdoc-openapi (Swagger UI)                                        |
+| Build           | maven Kotlin                                                         |
+| Tests           | JUnit 5, MockK, kotlinx-coroutines-test, Reactor `StepVerifier`       |
 
 ## Package layout
 
@@ -166,7 +166,7 @@ doesn't sit cleanly on WebFlux, so this is a **plain reactive WebSocket** instea
 
 ```bash
 # with a local MongoDB already running on 27017
-./gradlew bootRun
+./mvnw spring-boot:run
 
 # or via Docker (see below), which also starts Mongo for you
 docker compose up --build
@@ -175,27 +175,28 @@ docker compose up --build
 Run the test suite:
 
 ```bash
-./gradlew test
+./mvnw test
 ```
 
 ## Docker
 
 ### `Dockerfile`
 
-Multi-stage build: compiles the fat jar with Gradle in a JDK image, then copies just
+Multi-stage build: compiles the fat jar with Maven in a JDK image, then copies just
 the jar into a slim JRE image for the runtime layer.
 
 ```dockerfile
-FROM eclipse-temurin:25-jdk AS build
+FROM eclipse-temurin:24-jdk AS build
 WORKDIR /app
-COPY gradle gradle
-COPY gradlew settings.gradle.kts build.gradle.kts ./
+COPY mvnw pom.xml mvnw.cmd ./
+COPY .mvn .mvn
+RUN chmod +x mvnw
 COPY src src
-RUN chmod +x gradlew && ./gradlew bootJar --no-daemon
+RUN ./mvnw clean package -DskipTests
 
-FROM eclipse-temurin:25-jre
+FROM eclipse-temurin:24-jre
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
