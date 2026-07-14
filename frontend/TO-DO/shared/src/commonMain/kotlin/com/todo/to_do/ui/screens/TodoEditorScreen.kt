@@ -105,7 +105,7 @@ fun TodoEditorScreen(
                     style = MaterialTheme.typography.headlineSmall,
                     color = colors.textPrimary
                 )
-                TextButton(onClick = onBack) { Text("Back", color = colors.accent400) }
+                TextButton(onClick = onBack, enabled = !state.isSaving) { Text("Back", color = colors.accent400) }
             }
             TaskFlowTopLoader(visible = state.isLoading)
 
