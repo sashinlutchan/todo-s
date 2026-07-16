@@ -8,7 +8,7 @@ import reactor.core.publisher.Sinks
 @Service
 class SyncBroadcastService {
 
-    private val sink = Sinks.many().multicast().onBackpressureBuffer<SyncEvent>()
+    private val sink = Sinks.many().multicast().directBestEffort<SyncEvent>()
 
     fun broadcast(event: SyncEvent) {
         sink.tryEmitNext(event)

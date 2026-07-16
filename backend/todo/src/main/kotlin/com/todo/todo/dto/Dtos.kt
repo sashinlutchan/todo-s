@@ -1,5 +1,6 @@
 package com.todo.todo.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.todo.todo.model.Priority
 import com.todo.todo.model.Todo
 import java.time.Instant
@@ -18,7 +19,7 @@ data class AuthResponse(
 data class TodoRequest(
     val title: String,
     val description: String?,
-    val isCompleted: Boolean = false,
+    @get:JsonProperty("isCompleted") val isCompleted: Boolean = false,
     val priority: Priority = Priority.MEDIUM,
     val category: String?,
     val dueDate: Instant?
@@ -29,7 +30,7 @@ data class TodoResponse(
     val userId: String,
     val title: String,
     val description: String?,
-    val isCompleted: Boolean,
+    @get:JsonProperty("isCompleted") val isCompleted: Boolean,
     val priority: Priority,
     val category: String?,
     val dueDate: Instant?,

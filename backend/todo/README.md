@@ -1,4 +1,27 @@
+ 
+
+
+
+
+
 # todo-backend
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Reactive Spring Boot backend for the TO-DO app: JWT auth, todo CRUD, and a WebSocket
 sync feed, backed by MongoDB. Written in Kotlin using coroutines end-to-end (no

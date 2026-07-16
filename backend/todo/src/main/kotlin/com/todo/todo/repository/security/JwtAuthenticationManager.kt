@@ -1,5 +1,6 @@
 package com.todo.todo.repository.security
 
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -13,8 +14,10 @@ class JwtAuthenticationManager(
 ) : ReactiveAuthenticationManager {
 
     override fun authenticate(authentication: Authentication): Mono<Authentication> {
-        val token = authentication.credentials as? String ?: return Mono.empty()
-        val principal = jwtService.parseToken(token) ?: return Mono.empty()
+        val token = authentication.credentials as? String
+            ?: return Mono.error(BadCredentialsException("Missing bearer token"))
+        val principal = jwtService.parseToken(token)
+            ?: return Mono.error(BadCredentialsException("Invalid or expired token"))
 
         val authenticatedToken = UsernamePasswordAuthenticationToken(
             principal.userId, // principal is the userId (as its name)
