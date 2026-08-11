@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import com.todo.to_do.data.remote.SessionStore
+import com.todo.to_do.domain.repository.AuthRepository
 import com.todo.to_do.ui.theme.TaskFlowTheme
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
@@ -38,7 +39,8 @@ import org.koin.compose.koinInject
 @Composable
 fun SplashScreen(
     onFinished: (isLoggedIn: Boolean) -> Unit,
-    sessionStore: SessionStore = koinInject()
+    sessionStore: SessionStore = koinInject(),
+    authRepository: AuthRepository = koinInject()
 ) {
     val colors = TaskFlowTheme.colors
 
@@ -71,7 +73,14 @@ fun SplashScreen(
     }
 
     LaunchedEffect(Unit) {
-        val isLoggedIn = sessionStore.session.value != null
+        val hasStoredSession = sessionStore.session.value != null
+        // A confirmed-invalid token clears the session and reports false; a network error
+        // (offline launch) falls back to trusting the stored token rather than logging out.
+        val isLoggedIn = if (hasStoredSession) {
+            runCatching { authRepository.verifyToken() }.getOrDefault(true)
+        } else {
+            false
+        }
         delay(1400)
         onFinished(isLoggedIn)
     }

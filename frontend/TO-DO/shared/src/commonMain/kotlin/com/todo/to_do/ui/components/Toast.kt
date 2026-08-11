@@ -47,7 +47,7 @@ class ToastState(private val scope: CoroutineScope) {
         dismissJob?.cancel()
         current = ToastMessage(text, isError)
         dismissJob = scope.launch {
-            delay(2600)
+            delay(4500)
             current = null
         }
     }

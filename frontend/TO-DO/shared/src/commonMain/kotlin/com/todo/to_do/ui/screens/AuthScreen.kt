@@ -34,6 +34,8 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun AuthScreen(
     onAuthenticated: () -> Unit,
+    onNeedsVerification: (String) -> Unit = {},
+    onNavigateToForgotPassword: () -> Unit = {},
     viewModel: AuthViewModel = koinViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -43,6 +45,7 @@ fun AuthScreen(
     viewModel.collectSideEffect { effect ->
         when (effect) {
             AuthSideEffect.Authenticated -> onAuthenticated()
+            is AuthSideEffect.NeedsVerification -> onNeedsVerification(effect.email)
             is AuthSideEffect.ShowError -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
         }
     }
@@ -67,6 +70,25 @@ fun AuthScreen(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth()
         )
+        if (state.isRegisterMode) {
+            OutlinedTextField(
+                value = state.displayName,
+                onValueChange = viewModel::onDisplayNameChange,
+                label = { Text("Display name (optional)") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = state.phoneNumber,
+                onValueChange = viewModel::onPhoneNumberChange,
+                label = { Text("Phone number") },
+                placeholder = { Text("+15551234567") },
+                supportingText = { Text("Include your country code, e.g. +1 for the US") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
         OutlinedTextField(
             value = state.password,
             onValueChange = viewModel::onPasswordChange,
@@ -86,6 +108,11 @@ fun AuthScreen(
         }
         TextButton(onClick = viewModel::toggleMode) {
             Text(if (state.isRegisterMode) "Have an account? Login" else "New here? Create an account")
+        }
+        if (!state.isRegisterMode) {
+            TextButton(onClick = onNavigateToForgotPassword) {
+                Text("Forgot password?")
+            }
         }
         SnackbarHost(hostState = snackbarHostState)
     }

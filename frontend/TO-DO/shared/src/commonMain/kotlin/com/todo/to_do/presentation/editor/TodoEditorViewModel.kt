@@ -7,7 +7,10 @@ import com.todo.to_do.domain.repository.TodoDraft
 import com.todo.to_do.domain.usecase.CreateTodoUseCase
 import com.todo.to_do.domain.usecase.GetTodoUseCase
 import com.todo.to_do.domain.usecase.UpdateTodoUseCase
+import com.todo.to_do.domain.usecase.ToggleCompleteUseCase
 import com.todo.to_do.presentation.alarm.AlarmScheduler
+import com.todo.to_do.util.toUserMessage
+import com.todo.to_do.util.nowInstant
 import kotlinx.datetime.Instant
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
@@ -16,6 +19,7 @@ class TodoEditorViewModel(
     private val getTodo: GetTodoUseCase,
     private val createTodo: CreateTodoUseCase,
     private val updateTodo: UpdateTodoUseCase,
+    private val toggleCompleteUseCase: ToggleCompleteUseCase,
     private val alarmScheduler: AlarmScheduler,
     private val reminderStore: ReminderStore
 ) : ViewModel(), ContainerHost<TodoEditorState, TodoEditorSideEffect> {
@@ -39,13 +43,35 @@ class TodoEditorViewModel(
                         priority = todo.priority,
                         priorityRank = todo.priorityRank,
                         category = todo.category,
-                        reminderTime = reminderStore.get(todo.id)
+                        reminderTime = reminderStore.get(todo.id),
+                        isCompleted = todo.isCompleted
                     )
                 }
             }
             .onFailure {
                 reduce { state.copy(isLoading = false) }
-                postSideEffect(TodoEditorSideEffect.ShowSnackbar(it.message ?: "Failed to load", isError = true))
+                postSideEffect(TodoEditorSideEffect.ShowSnackbar(it.toUserMessage("Failed to load"), isError = true))
+            }
+    }
+
+    fun toggleComplete() = intent {
+        val todoId = state.todoId ?: return@intent
+        reduce { state.copy(isSaving = true) }
+        runCatching { toggleCompleteUseCase(todoId) }
+            .onSuccess { updated ->
+                reduce { state.copy(isCompleted = updated.isCompleted, isSaving = false) }
+                if (updated.isCompleted) {
+                    alarmScheduler.cancel(todoId)
+                } else {
+                    reminderStore.get(todoId)?.let { time ->
+                        if (time > nowInstant()) alarmScheduler.schedule(todoId, updated.title, time)
+                    }
+                }
+                postSideEffect(TodoEditorSideEffect.ShowSnackbar(if (updated.isCompleted) "Task completed" else "Task marked pending"))
+            }
+            .onFailure {
+                reduce { state.copy(isSaving = false) }
+                postSideEffect(TodoEditorSideEffect.ShowSnackbar(it.toUserMessage("Update failed"), isError = true))
             }
     }
 
@@ -72,7 +98,7 @@ class TodoEditorViewModel(
                 postSideEffect(TodoEditorSideEffect.Saved)
             }.onFailure {
                 reduce { state.copy(isSaving = false) }
-                postSideEffect(TodoEditorSideEffect.ShowSnackbar(it.message ?: "Save failed", isError = true))
+                postSideEffect(TodoEditorSideEffect.ShowSnackbar(it.toUserMessage("Save failed"), isError = true))
             }
         }
 

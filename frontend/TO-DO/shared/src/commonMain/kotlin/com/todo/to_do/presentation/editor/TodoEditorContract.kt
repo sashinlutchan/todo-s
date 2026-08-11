@@ -12,6 +12,7 @@ data class TodoEditorState(
     val priorityRank: Int = Int.MAX_VALUE,
     val category: String? = null,
     val reminderTime: Instant? = null,
+    val isCompleted: Boolean = false,
     val isLoading: Boolean = false,
     val isSaving: Boolean = false
 ) {

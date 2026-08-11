@@ -37,11 +37,17 @@ fun Todo.toEntity(): TodoEntity = TodoEntity(
 fun UserEntity.toDomain(): User = User(
     id = id,
     email = email,
-    passwordHash = passwordHash
+    passwordHash = passwordHash,
+    displayName = displayName,
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )
 
 fun User.toEntity(): UserEntity = UserEntity(
     id = id,
     email = email,
-    passwordHash = passwordHash
+    passwordHash = passwordHash,
+    displayName = displayName,
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )

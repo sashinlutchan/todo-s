@@ -1,5 +1,6 @@
 package com.todo.todo
 
+import com.todo.todo.repository.PasswordResetRepository
 import com.todo.todo.repository.TodoRepository
 import com.todo.todo.repository.UserRepository
 import org.junit.jupiter.api.Test
@@ -20,6 +21,9 @@ class TodoBackendApplicationTests {
 
     @MockitoBean
     lateinit var userRepository: UserRepository
+
+    @MockitoBean
+    lateinit var passwordResetRepository: PasswordResetRepository
 
     @Test
     fun contextLoads() {

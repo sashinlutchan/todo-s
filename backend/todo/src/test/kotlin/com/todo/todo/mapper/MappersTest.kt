@@ -73,7 +73,7 @@ class MappersTest {
     }
 
     @Test
-    fun `UserEntity toDomain maps id, email, and passwordHash`() {
+    fun `UserEntity toDomain maps id, email, passwordHash, and profile fields`() {
         val entity = TestFixtures.elenaMartinez()
 
         val domain = entity.toDomain()
@@ -81,6 +81,9 @@ class MappersTest {
         assertEquals(entity.id, domain.id)
         assertEquals("elena.martinez@protonmail.com", domain.email)
         assertEquals(entity.passwordHash, domain.passwordHash)
+        assertEquals(entity.displayName, domain.displayName)
+        assertEquals(entity.createdAt, domain.createdAt)
+        assertEquals(entity.updatedAt, domain.updatedAt)
     }
 
     @Test
@@ -94,10 +97,14 @@ class MappersTest {
 
     @Test
     fun `User toEntity preserves a null id for a not-yet-persisted user`() {
+        val now = Instant.parse("2026-07-20T09:00:00Z")
         val newUser = User(
             id = null,
             email = "priya.desai@fastmail.com",
-            passwordHash = "\$2a\$10\$freshlyHashedPriyaPassword"
+            passwordHash = "\$2a\$10\$freshlyHashedPriyaPassword",
+            displayName = "Priya",
+            createdAt = now,
+            updatedAt = now
         )
 
         val entity = newUser.toEntity()

@@ -8,6 +8,7 @@ import com.todo.to_do.domain.usecase.ReorderTodosUseCase
 import com.todo.to_do.domain.usecase.ToggleCompleteUseCase
 import com.todo.to_do.presentation.alarm.AlarmScheduler
 import com.todo.to_do.util.nowInstant
+import com.todo.to_do.util.toUserMessage
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 
@@ -28,7 +29,7 @@ class TodoListViewModel(
             .onSuccess { todos -> reduce { state.copy(todos = todos, isLoading = false) } }
             .onFailure { failure ->
                 reduce { state.copy(isLoading = false) }
-                postSideEffect(TodoListSideEffect.ShowSnackbar(failure.message ?: "Failed to load", isError = true))
+                postSideEffect(TodoListSideEffect.ShowSnackbar(failure.toUserMessage("Failed to load"), isError = true))
             }
     }
 
@@ -49,7 +50,7 @@ class TodoListViewModel(
                 }
                 postSideEffect(TodoListSideEffect.ShowSnackbar("Updated"))
             }
-            .onFailure { postSideEffect(TodoListSideEffect.ShowSnackbar(it.message ?: "Update failed", isError = true)) }
+            .onFailure { postSideEffect(TodoListSideEffect.ShowSnackbar(it.toUserMessage("Update failed"), isError = true)) }
     }
 
     fun delete(id: String) = intent {
@@ -60,7 +61,7 @@ class TodoListViewModel(
                 reminderStore.clear(id)
                 postSideEffect(TodoListSideEffect.ShowSnackbar("Deleted", isError = true))
             }
-            .onFailure { postSideEffect(TodoListSideEffect.ShowSnackbar(it.message ?: "Delete failed", isError = true)) }
+            .onFailure { postSideEffect(TodoListSideEffect.ShowSnackbar(it.toUserMessage("Delete failed"), isError = true)) }
     }
 
     fun reorder(orderedIds: List<String>) = intent {
@@ -69,6 +70,6 @@ class TodoListViewModel(
         reduce { state.copy(todos = optimistic + rest) }
         runCatching { reorderTodos(orderedIds) }
             .onSuccess { reordered -> reduce { state.copy(todos = reordered + rest) } }
-            .onFailure { postSideEffect(TodoListSideEffect.ShowSnackbar(it.message ?: "Reorder failed", isError = true)) }
+            .onFailure { postSideEffect(TodoListSideEffect.ShowSnackbar(it.toUserMessage("Reorder failed"), isError = true)) }
     }
 }

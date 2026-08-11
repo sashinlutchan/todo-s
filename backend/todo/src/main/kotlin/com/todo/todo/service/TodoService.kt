@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
+import org.slf4j.LoggerFactory
 import java.time.Instant
 
 @Service
@@ -21,8 +22,12 @@ class TodoService(
     private val todoRepository: TodoRepository,
     private val syncBroadcastService: SyncBroadcastService
 ) {
+    companion object {
+        private val log = LoggerFactory.getLogger(TodoService::class.java)
+    }
 
     fun getTodos(userId: String, from: Instant?, to: Instant?, category: String?): Flow<Todo> {
+        log.info("Fetching todos for user={} from={} to={} category={}", userId, from, to, category)
         return todoRepository.findTodos(userId, from, to, category)
             .map { it.toDomain() }
     }
@@ -30,12 +35,14 @@ class TodoService(
     suspend fun getTodo(id: String, userId: String): Todo {
         val entity = todoRepository.findById(id) ?: throw TodoNotFoundException(id)
         if (entity.userId != userId) {
+            log.warn("Forbidden access to todo id={} by user={}", id, userId)
             throw ForbiddenResourceException()
         }
         return entity.toDomain()
     }
 
     suspend fun createTodo(request: TodoRequest, userId: String): Todo {
+        log.info("Creating todo for user={} title={}", userId, request.title)
         val count = todoRepository.countByUserId(userId).toInt()
         val entity = TodoEntity(
             userId = userId,
@@ -62,8 +69,10 @@ class TodoService(
     }
 
     suspend fun updateTodo(id: String, request: TodoRequest, userId: String): Todo {
+        log.info("Updating todo id={} for user={}", id, userId)
         val existing = todoRepository.findById(id) ?: throw TodoNotFoundException(id)
         if (existing.userId != userId) {
+            log.warn("Forbidden update of todo id={} by user={}", id, userId)
             throw ForbiddenResourceException()
         }
         val updatedEntity = existing.copy(
@@ -88,8 +97,10 @@ class TodoService(
     }
 
     suspend fun completeTodo(id: String, userId: String): Todo {
+        log.info("Toggling complete for todo id={} user={}", id, userId)
         val existing = todoRepository.findById(id) ?: throw TodoNotFoundException(id)
         if (existing.userId != userId) {
+            log.warn("Forbidden complete of todo id={} by user={}", id, userId)
             throw ForbiddenResourceException()
         }
         val updatedEntity = existing.copy(
@@ -109,8 +120,10 @@ class TodoService(
     }
 
     suspend fun deleteTodo(id: String, userId: String) {
+        log.info("Deleting todo id={} for user={}", id, userId)
         val existing = todoRepository.findById(id) ?: throw TodoNotFoundException(id)
         if (existing.userId != userId) {
+            log.warn("Forbidden delete of todo id={} by user={}", id, userId)
             throw ForbiddenResourceException()
         }
         todoRepository.delete(existing)
@@ -125,6 +138,7 @@ class TodoService(
     }
 
     suspend fun reorderTodos(orderedIds: List<String>, userId: String) {
+        log.info("Reordering {} todos for user={}", orderedIds.size, userId)
         val userTodos = todoRepository.findByUserIdOrderByPriorityRankAsc(userId).toList().associateBy { it.id }
         val updatedEntities = mutableListOf<TodoEntity>()
         orderedIds.forEachIndexed { index, id ->

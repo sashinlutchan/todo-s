@@ -12,6 +12,28 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository
+import org.springframework.security.web.server.util.matcher.NegatedServerWebExchangeMatcher
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers
+
+/** Paths the JWT filter never touches - either open to everyone, or (verify/forgot-password/
+ *  verify-reset-code/reset-password) endpoints that validate their own token/code and must be
+ *  able to report "invalid" as a normal response body instead of the filter's blank 401. */
+private val PUBLIC_PATHS = arrayOf(
+    "/api/v1/auth/register",
+    "/api/v1/auth/login",
+    "/api/v1/auth/verify",
+    "/api/v1/auth/forgot-password",
+    "/api/v1/auth/verify-reset-code",
+    "/api/v1/auth/reset-password",
+    "/api/v1/auth/verify-email",
+    "/api/v1/auth/resend-verification-code",
+    "/ws/**",
+    "/swagger-ui.html",
+    "/swagger-ui/**",
+    "/v3/api-docs/**",
+    "/v3/api-docs",
+    "/webjars/**"
+)
 
 @Configuration
 @EnableWebFluxSecurity
@@ -29,6 +51,12 @@ class SecurityConfig(
         val authenticationWebFilter = AuthenticationWebFilter(jwtAuthenticationManager)
         authenticationWebFilter.setServerAuthenticationConverter(BearerTokenAuthenticationConverter())
         authenticationWebFilter.setSecurityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+        // Skip authentication entirely on public paths, so a bad/expired token on e.g. /verify
+        // reaches the controller as a normal request instead of being rejected by the filter
+        // with an empty 401 before the handler ever runs.
+        authenticationWebFilter.setRequiresAuthenticationMatcher(
+            NegatedServerWebExchangeMatcher(ServerWebExchangeMatchers.pathMatchers(*PUBLIC_PATHS))
+        )
 
         return http
             .csrf { it.disable() }
@@ -37,15 +65,7 @@ class SecurityConfig(
             .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
             .authorizeExchange { exchange ->
                 exchange
-                    .pathMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
-                    .pathMatchers("/ws/**").permitAll()
-                    .pathMatchers(
-                        "/swagger-ui.html",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/v3/api-docs",
-                        "/webjars/**"
-                    ).permitAll()
+                    .pathMatchers(*PUBLIC_PATHS).permitAll()
                     .anyExchange().authenticated()
             }
             .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)

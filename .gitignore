@@ -124,3 +124,21 @@ Desktop.ini
 
 node_modules/
 **/node_modules/
+
+
+
+
+
+.kotlin
+.gradle
+
+xcuserdata
+!src/**/build/
+
+.idea
+
+captures
+.externalNativeBuild
+.cxx
+
+

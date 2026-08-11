@@ -21,6 +21,12 @@ class SessionStore(private val persistence: SessionPersistence) {
         persistence.save(session)
     }
 
+    /** Merges freshly-fetched profile fields (from /verify or /profile) into the current session. */
+    fun updateProfile(displayName: String, createdAt: String) {
+        val updated = _session.value?.copy(displayName = displayName, createdAt = createdAt) ?: return
+        update(updated)
+    }
+
     fun clear() {
         _session.value = null
         persistence.clear()

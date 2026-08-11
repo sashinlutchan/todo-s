@@ -4,6 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.DisposableEffect
+
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,6 +25,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +57,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun TodoListScreen(
     onOpenTodo: (String) -> Unit,
     onAddTodo: () -> Unit,
+    onOpenProfile: () -> Unit = {},
     viewModel: TodoListViewModel = koinViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -63,7 +70,15 @@ fun TodoListScreen(
         }
     }
 
-    LaunchedEffect(Unit) { viewModel.loadTodos() }
+    // Re-load every time this screen resumes (initial entry + pop-back from editor).
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) viewModel.loadTodos()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     Scaffold(
         floatingActionButton = {
@@ -81,7 +96,11 @@ fun TodoListScreen(
                     .fillMaxSize()
                     .background(colors.surfacePage)
             ) {
-                TodoListHeader(tab = state.selectedTab, count = state.visibleTodos.size)
+                TodoListHeader(
+                    tab = state.selectedTab,
+                    count = state.visibleTodos.size,
+                    onOpenProfile = onOpenProfile
+                )
                 TaskFlowTopLoader(visible = state.isLoading)
 
                 if (!state.isLoading && state.visibleTodos.isEmpty()) {
@@ -109,24 +128,32 @@ fun TodoListScreen(
 }
 
 @Composable
-private fun TodoListHeader(tab: TodoTab, count: Int) {
+private fun TodoListHeader(tab: TodoTab, count: Int, onOpenProfile: () -> Unit) {
     val colors = TaskFlowTheme.colors
     val subtitle = when (tab) {
         TodoTab.ACTIVE -> if (count == 1) "1 task open" else "$count tasks open"
         TodoTab.OVERDUE -> if (count == 1) "1 task overdue" else "$count tasks overdue"
         TodoTab.COMPLETED -> if (count == 1) "1 task completed" else "$count tasks completed"
     }
-    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 16.dp)) {
-        Text(
-            text = "Tasks",
-            style = MaterialTheme.typography.headlineSmall,
-            color = colors.textPrimary
-        )
-        Text(
-            text = subtitle,
-            style = MaterialTheme.typography.labelMedium,
-            color = if (tab == TodoTab.OVERDUE && count > 0) colors.danger else colors.textSecondary
-        )
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            Text(
+                text = "Tasks",
+                style = MaterialTheme.typography.headlineSmall,
+                color = colors.textPrimary
+            )
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.labelMedium,
+                color = if (tab == TodoTab.OVERDUE && count > 0) colors.danger else colors.textSecondary
+            )
+        }
+        TextButton(onClick = onOpenProfile) {
+            Text("Profile", color = colors.accent400)
+        }
     }
 }
 

@@ -1,13 +1,27 @@
 package com.todo.to_do.data.remote
 
 import com.todo.to_do.data.remote.dto.AuthResponseDto
+import com.todo.to_do.data.remote.dto.ForgotPasswordRequestDto
+import com.todo.to_do.data.remote.dto.ForgotPasswordResponseDto
 import com.todo.to_do.data.remote.dto.LoginRequestDto
 import com.todo.to_do.data.remote.dto.RegisterRequestDto
+import com.todo.to_do.data.remote.dto.RegisterResponseDto
 import com.todo.to_do.data.remote.dto.ReorderRequestDto
+import com.todo.to_do.data.remote.dto.ResendVerificationCodeRequestDto
+import com.todo.to_do.data.remote.dto.ResendVerificationCodeResponseDto
+import com.todo.to_do.data.remote.dto.ResetPasswordRequestDto
+import com.todo.to_do.data.remote.dto.ResetPasswordResponseDto
 import com.todo.to_do.data.remote.dto.TodoDto
 import com.todo.to_do.data.remote.dto.TodoRequestDto
+import com.todo.to_do.data.remote.dto.UserProfileDto
+import com.todo.to_do.data.remote.dto.VerifyEmailRequestDto
+import com.todo.to_do.data.remote.dto.VerifyEmailResponseDto
+import com.todo.to_do.data.remote.dto.VerifyResetCodeRequestDto
+import com.todo.to_do.data.remote.dto.VerifyResetCodeResponseDto
+import com.todo.to_do.data.remote.dto.VerifyTokenResponseDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.expectSuccess
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -21,11 +35,37 @@ import kotlinx.datetime.Instant
 
 class TaskFlowApi(private val client: HttpClient) {
 
-    suspend fun register(request: RegisterRequestDto): AuthResponseDto =
+    suspend fun register(request: RegisterRequestDto): RegisterResponseDto =
         client.post("/api/v1/auth/register") { jsonBody(request) }.body()
 
     suspend fun login(request: LoginRequestDto): AuthResponseDto =
         client.post("/api/v1/auth/login") { jsonBody(request) }.body()
+
+    /**
+     * `expectSuccess = false` here and below: the backend reports an invalid/expired
+     * token/code as a normal 401/400 JSON body (`valid`/`success` + `reason`), not just an
+     * HTTP failure, so the client must still deserialize the body instead of throwing.
+     */
+    suspend fun verifyToken(): VerifyTokenResponseDto =
+        client.get("/api/v1/auth/verify") { expectSuccess = false }.body()
+
+    suspend fun getProfile(): UserProfileDto =
+        client.get("/api/v1/auth/profile").body()
+
+    suspend fun forgotPassword(request: ForgotPasswordRequestDto): ForgotPasswordResponseDto =
+        client.post("/api/v1/auth/forgot-password") { jsonBody(request) }.body()
+
+    suspend fun verifyResetCode(request: VerifyResetCodeRequestDto): VerifyResetCodeResponseDto =
+        client.post("/api/v1/auth/verify-reset-code") { jsonBody(request); expectSuccess = false }.body()
+
+    suspend fun resetPassword(request: ResetPasswordRequestDto): ResetPasswordResponseDto =
+        client.post("/api/v1/auth/reset-password") { jsonBody(request); expectSuccess = false }.body()
+
+    suspend fun verifyEmail(request: VerifyEmailRequestDto): VerifyEmailResponseDto =
+        client.post("/api/v1/auth/verify-email") { jsonBody(request); expectSuccess = false }.body()
+
+    suspend fun resendVerificationCode(request: ResendVerificationCodeRequestDto): ResendVerificationCodeResponseDto =
+        client.post("/api/v1/auth/resend-verification-code") { jsonBody(request) }.body()
 
     suspend fun getTodos(from: Instant?, to: Instant?, category: String?): List<TodoDto> =
         client.get("/api/v1/todos") {

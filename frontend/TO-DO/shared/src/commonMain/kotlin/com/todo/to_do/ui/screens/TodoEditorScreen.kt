@@ -164,6 +164,19 @@ fun TodoEditorScreen(
                 }
             }
 
+            if (!state.isNew) {
+                OutlinedButton(
+                    onClick = { viewModel.toggleComplete() },
+                    enabled = !state.isSaving,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = if (state.isCompleted) "Mark as Pending" else "Mark as Completed",
+                        color = if (state.isCompleted) colors.textPrimary else colors.accent600
+                    )
+                }
+            }
+
             Button(
                 onClick = {
                     viewModel.save(title.trim(), description.trim().ifBlank { null }, dueDate, priority, reminderTime)

@@ -40,25 +40,33 @@ actual class SessionPersistence {
         Keychain.set(KEY_TOKEN, session.token)
         Keychain.set(KEY_USER_ID, session.userId)
         Keychain.set(KEY_EMAIL, session.email)
+        Keychain.set(KEY_DISPLAY_NAME, session.displayName)
+        session.createdAt?.let { Keychain.set(KEY_CREATED_AT, it) } ?: Keychain.delete(KEY_CREATED_AT)
     }
 
     actual fun load(): AuthSession? {
         val token = Keychain.get(KEY_TOKEN) ?: return null
         val userId = Keychain.get(KEY_USER_ID) ?: return null
         val email = Keychain.get(KEY_EMAIL) ?: return null
-        return AuthSession(token = token, userId = userId, email = email)
+        val displayName = Keychain.get(KEY_DISPLAY_NAME) ?: ""
+        val createdAt = Keychain.get(KEY_CREATED_AT)
+        return AuthSession(token = token, userId = userId, email = email, displayName = displayName, createdAt = createdAt)
     }
 
     actual fun clear() {
         Keychain.delete(KEY_TOKEN)
         Keychain.delete(KEY_USER_ID)
         Keychain.delete(KEY_EMAIL)
+        Keychain.delete(KEY_DISPLAY_NAME)
+        Keychain.delete(KEY_CREATED_AT)
     }
 
     private companion object {
         const val KEY_TOKEN = "task_flow_session_token"
         const val KEY_USER_ID = "task_flow_session_user_id"
         const val KEY_EMAIL = "task_flow_session_email"
+        const val KEY_DISPLAY_NAME = "task_flow_session_display_name"
+        const val KEY_CREATED_AT = "task_flow_session_created_at"
     }
 }
 

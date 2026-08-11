@@ -28,6 +28,8 @@ actual class SessionPersistence(context: Context) {
             .putString(KEY_TOKEN, session.token)
             .putString(KEY_USER_ID, session.userId)
             .putString(KEY_EMAIL, session.email)
+            .putString(KEY_DISPLAY_NAME, session.displayName)
+            .putString(KEY_CREATED_AT, session.createdAt)
             .apply()
     }
 
@@ -35,7 +37,9 @@ actual class SessionPersistence(context: Context) {
         val token = prefs.getString(KEY_TOKEN, null) ?: return null
         val userId = prefs.getString(KEY_USER_ID, null) ?: return null
         val email = prefs.getString(KEY_EMAIL, null) ?: return null
-        return AuthSession(token = token, userId = userId, email = email)
+        val displayName = prefs.getString(KEY_DISPLAY_NAME, null) ?: ""
+        val createdAt = prefs.getString(KEY_CREATED_AT, null)
+        return AuthSession(token = token, userId = userId, email = email, displayName = displayName, createdAt = createdAt)
     }
 
     actual fun clear() {
@@ -46,5 +50,7 @@ actual class SessionPersistence(context: Context) {
         const val KEY_TOKEN = "token"
         const val KEY_USER_ID = "user_id"
         const val KEY_EMAIL = "email"
+        const val KEY_DISPLAY_NAME = "display_name"
+        const val KEY_CREATED_AT = "created_at"
     }
 }

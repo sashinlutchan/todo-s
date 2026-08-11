@@ -3,6 +3,7 @@ package com.todo.to_do.data.remote.dto
 import com.todo.to_do.domain.model.AuthSession
 import com.todo.to_do.domain.model.Priority
 import com.todo.to_do.domain.model.Todo
+import com.todo.to_do.domain.model.UserProfile
 import com.todo.to_do.domain.repository.TodoDraft
 
 fun TodoDto.toDomain(): Todo = Todo(
@@ -31,5 +32,13 @@ fun TodoDraft.toRequestDto(): TodoRequestDto = TodoRequestDto(
 fun AuthResponseDto.toDomain(): AuthSession = AuthSession(
     token = token,
     userId = userId,
-    email = email
+    email = email,
+    displayName = displayName
+)
+
+fun UserProfileDto.toDomain(): UserProfile = UserProfile(
+    id = id,
+    email = email,
+    displayName = displayName,
+    createdAt = createdAt.toString()
 )
