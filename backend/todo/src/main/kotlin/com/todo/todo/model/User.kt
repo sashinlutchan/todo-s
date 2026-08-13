@@ -10,3 +10,4 @@ data class User(
     val createdAt: Instant,
     val updatedAt: Instant
 )
+

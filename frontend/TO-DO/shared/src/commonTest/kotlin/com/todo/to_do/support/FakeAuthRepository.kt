@@ -7,7 +7,6 @@ import com.todo.to_do.domain.model.ResetCodeVerification
 import com.todo.to_do.domain.model.UserProfile
 import com.todo.to_do.domain.repository.AuthRepository
 
-/** In-memory [AuthRepository] test double - avoids needing the platform-specific SessionPersistence. */
 class FakeAuthRepository(
     private var session: AuthSession? = null,
     var profile: UserProfile? = null,
@@ -56,3 +55,4 @@ class FakeAuthRepository(
     override suspend fun resendVerificationCode(email: String): String =
         resendVerificationCodeResult.getOrThrow()
 }
+

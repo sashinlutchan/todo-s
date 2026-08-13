@@ -7,3 +7,4 @@ import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalTime::class)
 fun nowInstant(): Instant =
     Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds())
+

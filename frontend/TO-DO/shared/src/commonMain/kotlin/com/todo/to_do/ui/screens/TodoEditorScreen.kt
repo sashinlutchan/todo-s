@@ -197,7 +197,19 @@ fun TodoEditorScreen(
             onDismissRequest = { showDueDatePicker = false },
             confirmButton = {
                 TextButton(onClick = {
-                    datePickerState.selectedDateMillis?.let { dueDate = Instant.fromEpochMilliseconds(it) }
+                    datePickerState.selectedDateMillis?.let {
+                        val date = Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.UTC).date
+                        val endOfDay = LocalDateTime(
+                            date.year,
+                            date.monthNumber,
+                            date.dayOfMonth,
+                            23,
+                            59,
+                            59,
+                            999999999
+                        )
+                        dueDate = endOfDay.toInstant(TimeZone.currentSystemDefault())
+                    }
                     showDueDatePicker = false
                 }) { Text("OK") }
             },
@@ -284,3 +296,4 @@ private fun PriorityChip(
         )
     }
 }
+

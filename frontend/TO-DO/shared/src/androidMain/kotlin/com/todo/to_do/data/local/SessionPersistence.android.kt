@@ -5,11 +5,6 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.todo.to_do.domain.model.AuthSession
 
-/**
- * Stores the session in EncryptedSharedPreferences (AES-256 keys wrapped by the Android
- * Keystore) rather than plain SharedPreferences, so the bearer token is unreadable from a
- * device backup or a rooted device's filesystem.
- */
 actual class SessionPersistence(context: Context) {
     private val masterKey = MasterKey.Builder(context)
         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)

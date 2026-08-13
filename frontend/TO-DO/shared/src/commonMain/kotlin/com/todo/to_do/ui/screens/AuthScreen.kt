@@ -117,3 +117,4 @@ fun AuthScreen(
         SnackbarHost(hostState = snackbarHostState)
     }
 }
+

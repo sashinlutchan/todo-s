@@ -9,3 +9,4 @@ sealed interface PasswordResetOutcome {
     data object Success : PasswordResetOutcome
     data class Failure(val reason: String?) : PasswordResetOutcome
 }
+

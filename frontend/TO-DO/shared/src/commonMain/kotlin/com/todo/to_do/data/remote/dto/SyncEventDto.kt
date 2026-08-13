@@ -11,3 +11,4 @@ data class SyncEventDto(
     val entityId: String,
     val timestamp: Instant
 )
+

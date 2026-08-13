@@ -141,3 +141,4 @@ fun priorityColor(priority: Priority): Color {
 fun PriorityDot(priority: Priority) {
     Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(priorityColor(priority)))
 }
+

@@ -13,12 +13,6 @@ import platform.UserNotifications.UNUserNotificationCenter
 private const val BURST_COUNT = 3
 private const val BURST_SPACING_SECONDS = 25.0
 
-/**
- * iOS caps any notification sound at ~30s and only "Critical Alerts" (a special, Apple-approved
- * entitlement) can bypass that - and even those aren't guaranteed to loop for a full minute. The
- * practical workaround without a special entitlement is a short burst of separate notifications
- * spaced ~25s apart, so the phone alerts repeatedly across roughly a minute.
- */
 actual class AlarmScheduler {
 
     init {
@@ -57,3 +51,4 @@ actual class AlarmScheduler {
 
     private fun requestId(todoId: String, index: Int) = "$todoId#$index"
 }
+

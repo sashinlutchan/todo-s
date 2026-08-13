@@ -74,8 +74,7 @@ fun SplashScreen(
 
     LaunchedEffect(Unit) {
         val hasStoredSession = sessionStore.session.value != null
-        // A confirmed-invalid token clears the session and reports false; a network error
-        // (offline launch) falls back to trusting the stored token rather than logging out.
+        
         val isLoggedIn = if (hasStoredSession) {
             runCatching { authRepository.verifyToken() }.getOrDefault(true)
         } else {

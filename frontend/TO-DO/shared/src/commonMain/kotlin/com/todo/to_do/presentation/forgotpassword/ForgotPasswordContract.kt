@@ -9,3 +9,4 @@ sealed interface ForgotPasswordSideEffect {
     data class CodeSent(val email: String) : ForgotPasswordSideEffect
     data class ShowError(val message: String) : ForgotPasswordSideEffect
 }
+

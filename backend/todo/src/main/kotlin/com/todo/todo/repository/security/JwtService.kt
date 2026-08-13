@@ -73,7 +73,6 @@ class JwtService(
         }
     }
 
-    /** Like [parseToken], but distinguishes an expired signature from a malformed/forged one. */
     fun validateToken(token: String): TokenValidation {
         return try {
             val claims = Jwts.parser()
@@ -94,7 +93,6 @@ class JwtService(
         }
     }
 
-    /** Short-lived token proving the holder just verified a password-reset OTP for [email]. */
     fun generateResetToken(email: String): String {
         val now = Instant.now()
         val expiry = now.plusMillis(resetTokenExpirationMs)
@@ -128,3 +126,4 @@ class JwtService(
         }
     }
 }
+

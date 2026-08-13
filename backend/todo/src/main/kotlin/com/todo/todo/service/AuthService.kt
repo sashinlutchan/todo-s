@@ -40,7 +40,6 @@ private const val RESET_CODE_TTL_MINUTES = 15L
 private const val VERIFICATION_CODE_TTL_MINUTES = 15L
 private const val MIN_PASSWORD_LENGTH = 8
 
-// E.164: a leading '+', a non-zero country code digit, then up to 14 more digits.
 private val E164_PHONE_REGEX = Regex("^\\+[1-9]\\d{7,14}$")
 
 @Service
@@ -111,11 +110,6 @@ class AuthService(
         )
     }
 
-    /**
-     * Manually validates the bearer token rather than relying on the security filter chain,
-     * since an expired/invalid token here is an expected outcome to report back to the caller,
-     * not a request to reject at the gate.
-     */
     suspend fun verifyToken(token: String): VerifyTokenResponse {
         return when (val validation = jwtService.validateToken(token)) {
             is TokenValidation.Valid -> {
@@ -161,8 +155,6 @@ class AuthService(
             )
         }
 
-        // Always return the same response regardless of whether the email exists,
-        // so this endpoint can't be used to enumerate registered accounts.
         return ForgotPasswordResponse(message = "If that email exists, a reset code has been texted to the phone on file")
     }
 
@@ -260,8 +252,6 @@ class AuthService(
             sendVerificationCode(user.email, user.phoneNumber, user.displayName)
         }
 
-        // Always return the same response regardless of whether the email exists or is already
-        // verified, so this endpoint can't be used to enumerate registered accounts.
         return ResendVerificationCodeResponse(message = "If that account needs verification, a new code has been sent")
     }
 

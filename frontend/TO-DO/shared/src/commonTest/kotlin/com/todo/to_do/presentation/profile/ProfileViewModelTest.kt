@@ -64,3 +64,4 @@ class ProfileViewModelTest {
         kotlin.test.assertTrue(repository.loggedOut)
     }
 }
+

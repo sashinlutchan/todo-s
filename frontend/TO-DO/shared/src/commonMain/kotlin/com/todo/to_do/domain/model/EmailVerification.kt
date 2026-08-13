@@ -4,3 +4,4 @@ sealed interface EmailVerificationOutcome {
     data object Verified : EmailVerificationOutcome
     data class Failed(val reason: String?) : EmailVerificationOutcome
 }
+

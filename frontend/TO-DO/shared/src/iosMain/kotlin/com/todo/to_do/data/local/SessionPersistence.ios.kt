@@ -30,10 +30,6 @@ import platform.Security.kSecMatchLimitOne
 import platform.Security.kSecReturnData
 import platform.Security.kSecValueData
 
-/**
- * Stores the session in the iOS Keychain (not NSUserDefaults), so the bearer token is
- * encrypted at rest and excluded from unencrypted device/iCloud backups.
- */
 @OptIn(ExperimentalForeignApi::class)
 actual class SessionPersistence {
     actual fun save(session: AuthSession) {
@@ -70,9 +66,6 @@ actual class SessionPersistence {
     }
 }
 
-// CFStringRef/NSString and NSMutableDictionary/CFDictionaryRef are toll-free bridged on Apple
-// platforms, so these "as" casts are safe at runtime even though the K2 compiler cannot verify
-// the bridging statically and warns CAST_NEVER_SUCCEEDS on every one of them.
 @Suppress("CAST_NEVER_SUCCEEDS")
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 private object Keychain {

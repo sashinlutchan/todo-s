@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TO-DO</string>
+    <string name="base_url">http://10.0.2.2:8080</string>
+    <string name="ws_url">ws://10.0.2.2:8080</string>
 </resources>

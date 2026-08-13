@@ -39,3 +39,4 @@ val useCaseModule = module {
     factoryOf(::VerifyEmailUseCase)
     factoryOf(::ResendVerificationCodeUseCase)
 }
+

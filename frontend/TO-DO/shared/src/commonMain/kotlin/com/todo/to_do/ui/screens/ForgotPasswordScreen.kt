@@ -96,3 +96,4 @@ fun ForgotPasswordScreen(
         ToastHost(toastState, modifier = Modifier.padding(padding))
     }
 }
+

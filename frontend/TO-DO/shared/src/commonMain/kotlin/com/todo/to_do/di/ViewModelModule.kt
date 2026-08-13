@@ -21,3 +21,4 @@ val viewModelModule = module {
     viewModelOf(::ProfileViewModel)
     viewModelOf(::VerifyEmailViewModel)
 }
+

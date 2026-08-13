@@ -14,3 +14,4 @@ suspend fun currentUserId(): String {
     }
     return authentication.name
 }
+

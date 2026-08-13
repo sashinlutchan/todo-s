@@ -7,10 +7,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBodilessEntity
 
-/**
- * Sends transactional SMS through the Infobip SMS API
- * (https://www.infobip.com/docs/api/channels/sms/sms-messaging/outbound-sms/send-sms-messages).
- */
 @Service
 class InfobipSmsService(
     @Value("\${app.infobip.base-url}") private val baseUrl: String,
@@ -49,8 +45,6 @@ class InfobipSmsService(
             .awaitBodilessEntity()
     }
 
-    // Infobip expects the destination as a plain-digit MSISDN with country code and no leading
-    // '+' — sending the '+' (or any non-digit) causes a "Mobile operator not found" / 345 rejection.
     internal fun toMsisdn(phoneNumber: String): String = phoneNumber.filter { it.isDigit() }
 }
 
@@ -58,3 +52,4 @@ private data class SmsRequest(val messages: List<SmsMessage>)
 private data class SmsMessage(val destinations: List<SmsDestination>, val sender: String, val content: SmsContent)
 private data class SmsDestination(val to: String)
 private data class SmsContent(val text: String)
+

@@ -13,3 +13,4 @@ data class EmailVerificationEntity(
     @Indexed(expireAfterSeconds = 0) val expiresAt: Instant,
     val createdAt: Instant = Instant.now()
 )
+

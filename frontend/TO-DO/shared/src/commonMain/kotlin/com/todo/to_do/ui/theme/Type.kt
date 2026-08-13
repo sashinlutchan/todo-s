@@ -12,3 +12,4 @@ val TaskFlowTypography = Typography(
     labelMedium = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Medium),
     labelSmall = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.Medium)
 )
+

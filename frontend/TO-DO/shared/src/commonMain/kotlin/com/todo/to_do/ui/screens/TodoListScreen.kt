@@ -70,7 +70,6 @@ fun TodoListScreen(
         }
     }
 
-    // Re-load every time this screen resumes (initial entry + pop-back from editor).
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -303,3 +302,4 @@ private fun ReorderableTodoList(
         }
     }
 }
+

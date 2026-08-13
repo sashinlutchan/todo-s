@@ -20,3 +20,4 @@ class BearerTokenAuthenticationConverter : ServerAuthenticationConverter {
         return Mono.just(UsernamePasswordAuthenticationToken(token, token))
     }
 }
+

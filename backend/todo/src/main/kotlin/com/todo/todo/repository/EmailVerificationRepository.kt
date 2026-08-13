@@ -7,3 +7,4 @@ interface EmailVerificationRepository : CoroutineCrudRepository<EmailVerificatio
     suspend fun findFirstByEmailOrderByCreatedAtDesc(email: String): EmailVerificationEntity?
     suspend fun deleteByEmail(email: String)
 }
+

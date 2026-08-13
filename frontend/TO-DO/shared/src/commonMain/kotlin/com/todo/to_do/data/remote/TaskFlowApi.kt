@@ -41,11 +41,6 @@ class TaskFlowApi(private val client: HttpClient) {
     suspend fun login(request: LoginRequestDto): AuthResponseDto =
         client.post("/api/v1/auth/login") { jsonBody(request) }.body()
 
-    /**
-     * `expectSuccess = false` here and below: the backend reports an invalid/expired
-     * token/code as a normal 401/400 JSON body (`valid`/`success` + `reason`), not just an
-     * HTTP failure, so the client must still deserialize the body instead of throwing.
-     */
     suspend fun verifyToken(): VerifyTokenResponseDto =
         client.get("/api/v1/auth/verify") { expectSuccess = false }.body()
 
@@ -98,3 +93,4 @@ private inline fun <reified T> io.ktor.client.request.HttpRequestBuilder.jsonBod
     contentType(ContentType.Application.Json)
     setBody(body)
 }
+

@@ -28,3 +28,4 @@ data class ResetPasswordRoute(val resetToken: String)
 
 @Serializable
 object ProfileRoute
+

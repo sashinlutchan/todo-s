@@ -22,12 +22,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/**
- * These endpoints report an invalid/expired token or code as a normal 401/400 JSON body
- * (see [TaskFlowApi.verifyToken]/[TaskFlowApi.verifyResetCode]/[TaskFlowApi.resetPassword]),
- * so the important thing under test is that the body still deserializes despite the non-2xx
- * status - a plain `expectSuccess = true` client would throw and lose the `reason` field.
- */
 class TaskFlowApiAuthTest {
 
     private fun apiRespondingWith(status: HttpStatusCode, json: String): TaskFlowApi {
@@ -176,3 +170,4 @@ class TaskFlowApiAuthTest {
         assertEquals("Marcus Chen", response.displayName)
     }
 }
+

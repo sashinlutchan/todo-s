@@ -20,11 +20,6 @@ private const val NOTIFICATION_ID = 4200
 private const val RING_DURATION_MS = 60_000L
 private const val ACTION_DISMISS = "com.todo.to_do.alarm.DISMISS"
 
-/**
- * Keeps the device's alarm tone looping for at least [RING_DURATION_MS] once a reminder fires.
- * A plain notification sound isn't enough for that, so this owns the MediaPlayer loop itself and
- * only stops it on the timeout or an explicit user dismiss.
- */
 class AlarmRingService : Service() {
 
     private var mediaPlayer: MediaPlayer? = null
@@ -108,3 +103,4 @@ class AlarmRingService : Service() {
         super.onDestroy()
     }
 }
+

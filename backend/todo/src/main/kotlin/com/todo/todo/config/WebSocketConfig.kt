@@ -15,7 +15,7 @@ class WebSocketConfig(
     @Bean
     fun webSocketHandlerMapping(): HandlerMapping {
         val map = mapOf("/ws/sync" to syncSocketHandler)
-        val order = -1 // High priority mapping
+        val order = -1 
 
         return SimpleUrlHandlerMapping(map, order)
     }
@@ -25,3 +25,4 @@ class WebSocketConfig(
         return WebSocketHandlerAdapter()
     }
 }
+

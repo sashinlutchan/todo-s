@@ -48,10 +48,6 @@ class AuthController(
         }
     }
 
-    /**
-     * Bypasses the JWT security filter (see SecurityConfig permitAll) since an expired or
-     * malformed token is an expected outcome here, not grounds to reject the request itself.
-     */
     @GetMapping("/verify")
     suspend fun verifyToken(
         @RequestHeader(value = "Authorization", required = false) authHeader: String?

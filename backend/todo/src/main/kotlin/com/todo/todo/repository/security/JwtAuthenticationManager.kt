@@ -20,10 +20,11 @@ class JwtAuthenticationManager(
             ?: return Mono.error(BadCredentialsException("Invalid or expired token"))
 
         val authenticatedToken = UsernamePasswordAuthenticationToken(
-            principal.userId, // principal is the userId (as its name)
+            principal.userId, 
             token,
             listOf(SimpleGrantedAuthority("ROLE_USER"))
         )
         return Mono.just(authenticatedToken)
     }
 }
+

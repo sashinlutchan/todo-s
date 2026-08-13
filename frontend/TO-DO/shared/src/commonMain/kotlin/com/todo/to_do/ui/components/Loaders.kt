@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.todo.to_do.ui.theme.TaskFlowTheme
 
-/** Thin animated progress bar for "fetching data" states, replacing bare LinearProgressIndicator. */
 @Composable
 fun TaskFlowTopLoader(visible: Boolean, modifier: Modifier = Modifier) {
     val colors = TaskFlowTheme.colors
@@ -40,7 +39,6 @@ fun TaskFlowTopLoader(visible: Boolean, modifier: Modifier = Modifier) {
     }
 }
 
-/** Full-screen scrim + spinner for blocking operations (initial load, save, delete). */
 @Composable
 fun TaskFlowLoadingOverlay(
     visible: Boolean,
@@ -73,7 +71,6 @@ fun TaskFlowLoadingOverlay(
     }
 }
 
-/** Small inline spinner sized to sit inside a button, replacing button text while busy. */
 @Composable
 fun TaskFlowButtonSpinner(modifier: Modifier = Modifier) {
     val colors = TaskFlowTheme.colors

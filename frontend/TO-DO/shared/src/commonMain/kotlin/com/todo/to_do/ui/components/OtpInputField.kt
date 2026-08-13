@@ -23,7 +23,6 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 
-/** Six single-digit boxes that together edit one 6-digit OTP string. */
 @Composable
 fun OtpInputField(
     value: String,
@@ -50,7 +49,7 @@ fun OtpInputField(
                             focusRequesters[index + 1].requestFocus()
                         }
                     } else {
-                        // Deletion case
+                        
                         val padded = value.padEnd(length, ' ')
                         val updated = padded.substring(0, index) + " " + padded.substring(index + 1)
                         onValueChange(updated.trimEnd())
@@ -76,3 +75,4 @@ fun OtpInputField(
         }
     }
 }
+

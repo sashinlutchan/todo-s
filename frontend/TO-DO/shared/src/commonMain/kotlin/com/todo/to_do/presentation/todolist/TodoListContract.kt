@@ -25,3 +25,4 @@ fun List<Todo>.filterFor(tab: TodoTab): List<Todo> {
 sealed interface TodoListSideEffect {
     data class ShowSnackbar(val message: String, val isError: Boolean = false) : TodoListSideEffect
 }
+

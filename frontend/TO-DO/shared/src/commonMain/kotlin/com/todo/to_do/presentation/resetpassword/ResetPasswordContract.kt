@@ -10,3 +10,4 @@ sealed interface ResetPasswordSideEffect {
     data object Success : ResetPasswordSideEffect
     data class ShowError(val message: String) : ResetPasswordSideEffect
 }
+

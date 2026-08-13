@@ -42,3 +42,4 @@ fun UserProfileDto.toDomain(): UserProfile = UserProfile(
     displayName = displayName,
     createdAt = createdAt.toString()
 )
+

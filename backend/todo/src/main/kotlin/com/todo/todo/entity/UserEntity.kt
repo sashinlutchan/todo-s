@@ -16,3 +16,4 @@ data class UserEntity(
     val createdAt: Instant = Instant.now(),
     val updatedAt: Instant = Instant.now()
 )
+

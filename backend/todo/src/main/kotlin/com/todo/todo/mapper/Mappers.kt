@@ -51,3 +51,4 @@ fun User.toEntity(): UserEntity = UserEntity(
     createdAt = createdAt,
     updatedAt = updatedAt
 )
+

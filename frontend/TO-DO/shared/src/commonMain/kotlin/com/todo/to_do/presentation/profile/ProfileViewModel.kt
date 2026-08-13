@@ -38,3 +38,4 @@ class ProfileViewModel(
         postSideEffect(ProfileSideEffect.LoggedOut)
     }
 }
+

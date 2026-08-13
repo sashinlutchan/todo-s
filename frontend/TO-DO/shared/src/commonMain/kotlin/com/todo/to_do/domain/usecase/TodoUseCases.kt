@@ -36,3 +36,4 @@ class DeleteTodoUseCase(private val repository: TodoRepository) {
 class ReorderTodosUseCase(private val repository: TodoRepository) {
     suspend operator fun invoke(orderedIds: List<String>): List<Todo> = repository.reorder(orderedIds)
 }
+

@@ -6,10 +6,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-/**
- * Holder for the authenticated session. Seeded from [SessionPersistence] on startup so a login
- * survives process death; the bearer token is read by the Ktor auth interceptor.
- */
 class SessionStore(private val persistence: SessionPersistence) {
     private val _session = MutableStateFlow(persistence.load())
     val session: StateFlow<AuthSession?> = _session.asStateFlow()
@@ -21,7 +17,6 @@ class SessionStore(private val persistence: SessionPersistence) {
         persistence.save(session)
     }
 
-    /** Merges freshly-fetched profile fields (from /verify or /profile) into the current session. */
     fun updateProfile(displayName: String, createdAt: String) {
         val updated = _session.value?.copy(displayName = displayName, createdAt = createdAt) ?: return
         update(updated)
@@ -32,3 +27,4 @@ class SessionStore(private val persistence: SessionPersistence) {
         persistence.clear()
     }
 }
+

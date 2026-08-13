@@ -17,3 +17,4 @@ data class Todo(
 )
 
 enum class Priority { LOW, MEDIUM, HIGH }
+

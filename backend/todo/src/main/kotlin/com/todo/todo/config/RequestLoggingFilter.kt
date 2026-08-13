@@ -8,14 +8,6 @@ import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
 
-/**
- * Logs every incoming HTTP request and its response status + duration.
- * Visible in Grafana under {service_name="todo-backend"}.
- *
- * Output format:
- *   --> GET /api/v1/todos
- *   <-- 200 GET /api/v1/todos (47ms)
- */
 @Component
 @Order(-1)
 class RequestLoggingFilter : WebFilter {
@@ -46,3 +38,4 @@ class RequestLoggingFilter : WebFilter {
         }
     }
 }
+

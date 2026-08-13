@@ -14,3 +14,4 @@ sealed interface AuthSideEffect {
     data class NeedsVerification(val email: String) : AuthSideEffect
     data class ShowError(val message: String) : AuthSideEffect
 }
+

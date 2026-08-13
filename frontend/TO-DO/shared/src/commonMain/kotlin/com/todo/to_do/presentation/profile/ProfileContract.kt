@@ -11,3 +11,4 @@ sealed interface ProfileSideEffect {
     data class ShowError(val message: String) : ProfileSideEffect
     data object LoggedOut : ProfileSideEffect
 }
+

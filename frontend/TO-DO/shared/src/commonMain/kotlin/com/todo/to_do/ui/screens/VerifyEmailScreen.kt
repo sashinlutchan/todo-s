@@ -99,3 +99,4 @@ fun VerifyEmailScreen(
         ToastHost(toastState, modifier = Modifier.padding(padding))
     }
 }
+

@@ -10,3 +10,4 @@ sealed interface VerifyResetCodeSideEffect {
     data class ShowError(val message: String) : VerifyResetCodeSideEffect
     data class CodeResent(val message: String) : VerifyResetCodeSideEffect
 }
+

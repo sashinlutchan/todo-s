@@ -8,10 +8,6 @@ import io.ktor.websocket.readText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-/**
- * Ktor WebSocket client for the `/ws/sync` channel (§4.7). Emits every change event the backend
- * broadcasts for the authenticated user so the caller can refresh state accordingly.
- */
 class SyncClient(
     private val client: HttpClient,
     private val config: ApiConfig,
@@ -28,3 +24,4 @@ class SyncClient(
         }
     }
 }
+

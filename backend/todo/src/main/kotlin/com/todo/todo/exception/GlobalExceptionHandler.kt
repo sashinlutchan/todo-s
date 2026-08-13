@@ -26,3 +26,4 @@ class GlobalExceptionHandler {
         val timestamp: Instant = Instant.now()
     )
 }
+

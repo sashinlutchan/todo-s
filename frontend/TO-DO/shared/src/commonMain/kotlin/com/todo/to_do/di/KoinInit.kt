@@ -18,3 +18,4 @@ fun initKoin(appDeclaration: KoinApplication.() -> Unit = {}) {
         )
     }
 }
+

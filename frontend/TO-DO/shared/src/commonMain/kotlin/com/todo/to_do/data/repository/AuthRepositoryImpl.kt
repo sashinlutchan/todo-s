@@ -57,8 +57,7 @@ class AuthRepositoryImpl(
 
     override suspend fun getProfile(): UserProfile {
         val profile = api.getProfile().toDomain()
-        // Persist fresh profile data to secure storage so the stored session stays up-to-date,
-        // consistent with what verifyToken() does on every splash screen launch.
+        
         sessionStore.updateProfile(profile.displayName, profile.createdAt)
         return profile
     }
@@ -103,3 +102,4 @@ class AuthRepositoryImpl(
     override suspend fun resendVerificationCode(email: String): String =
         api.resendVerificationCode(ResendVerificationCodeRequestDto(email)).message
 }
+

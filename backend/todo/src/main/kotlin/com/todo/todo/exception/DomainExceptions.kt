@@ -51,3 +51,4 @@ class InvalidPhoneNumberException : DomainException(
     message = "Phone number must be in international format with a country code, e.g. +15551234567",
     status = HttpStatus.BAD_REQUEST
 )
+

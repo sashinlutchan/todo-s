@@ -11,3 +11,4 @@ actual val platformModule: Module = module {
     single { ReminderStore() }
     single { AlarmScheduler() }
 }
+

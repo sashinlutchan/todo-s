@@ -12,3 +12,4 @@ val repositoryModule = module {
     singleOf(::TodoRepositoryImpl) { bind<TodoRepository>() }
     singleOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
 }
+

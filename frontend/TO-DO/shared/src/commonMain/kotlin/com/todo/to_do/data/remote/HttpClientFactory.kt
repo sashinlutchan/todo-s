@@ -26,3 +26,4 @@ fun createHttpClient(config: ApiConfig, sessionStore: SessionStore): HttpClient 
         sessionStore.token?.let { header(HttpHeaders.Authorization, "Bearer $it") }
     }
 }
+

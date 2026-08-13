@@ -109,3 +109,4 @@ data class ResendVerificationCodeRequestDto(
 data class ResendVerificationCodeResponseDto(
     val message: String
 )
+

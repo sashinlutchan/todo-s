@@ -23,3 +23,4 @@ sealed interface TodoEditorSideEffect {
     data class ShowSnackbar(val message: String, val isError: Boolean = false) : TodoEditorSideEffect
     data object Saved : TodoEditorSideEffect
 }
+

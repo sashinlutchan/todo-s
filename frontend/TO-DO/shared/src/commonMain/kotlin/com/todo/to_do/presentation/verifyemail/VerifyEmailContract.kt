@@ -10,3 +10,4 @@ sealed interface VerifyEmailSideEffect {
     data class ShowError(val message: String) : VerifyEmailSideEffect
     data class CodeResent(val message: String) : VerifyEmailSideEffect
 }
+

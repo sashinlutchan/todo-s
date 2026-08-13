@@ -36,7 +36,6 @@ import kotlinx.coroutines.launch
 
 data class ToastMessage(val text: String, val isError: Boolean)
 
-/** Lightweight color-coded toast replacing the bare Material Snackbar for action feedback. */
 class ToastState(private val scope: CoroutineScope) {
     var current by mutableStateOf<ToastMessage?>(null)
         private set
@@ -95,3 +94,4 @@ fun ToastHost(state: ToastState, modifier: Modifier = Modifier) {
         }
     }
 }
+

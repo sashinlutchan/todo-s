@@ -56,3 +56,4 @@ private fun reasonMessage(reason: String?): String = when (reason) {
     "CODE_INVALID" -> "That code isn't right. Check and try again."
     else -> "Verification failed"
 }
+
