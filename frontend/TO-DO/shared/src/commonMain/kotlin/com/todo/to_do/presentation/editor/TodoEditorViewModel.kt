@@ -68,6 +68,9 @@ class TodoEditorViewModel(
                     }
                 }
                 postSideEffect(TodoEditorSideEffect.ShowSnackbar(if (updated.isCompleted) "Task completed" else "Task marked pending"))
+                if (updated.isCompleted) {
+                    postSideEffect(TodoEditorSideEffect.Saved)
+                }
             }
             .onFailure {
                 reduce { state.copy(isSaving = false) }

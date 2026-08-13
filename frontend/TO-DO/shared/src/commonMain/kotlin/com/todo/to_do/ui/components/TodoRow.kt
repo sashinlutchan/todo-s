@@ -65,7 +65,8 @@ fun TodoRow(
         PriorityDot(todo.priority)
         Checkbox(
             checked = todo.isCompleted,
-            onCheckedChange = { onToggle() },
+            onCheckedChange = { if (!todo.isCompleted) onToggle() },
+            enabled = !todo.isCompleted,
             colors = CheckboxDefaults.colors(checkedColor = colors.accent600)
         )
         Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {

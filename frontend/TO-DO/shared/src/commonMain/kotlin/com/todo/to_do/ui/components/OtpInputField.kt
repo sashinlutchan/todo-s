@@ -15,6 +15,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.todo.to_do.ui.theme.TaskFlowTheme
 
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.runtime.remember
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+
 /** Six single-digit boxes that together edit one 6-digit OTP string. */
 @Composable
 fun OtpInputField(
@@ -25,6 +33,8 @@ fun OtpInputField(
     isError: Boolean = false
 ) {
     val colors = TaskFlowTheme.colors
+    val focusRequesters = remember { List(length) { FocusRequester() } }
+
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         repeat(length) { index ->
             val digit = value.getOrNull(index)?.toString() ?: ""
@@ -32,16 +42,31 @@ fun OtpInputField(
                 value = digit,
                 onValueChange = { input ->
                     val typed = input.filter { it.isDigit() }
-                    when {
-                        typed.length <= 1 -> {
-                            val padded = value.padEnd(length, ' ')
-                            val updated = padded.substring(0, index) + typed.ifEmpty { " " } + padded.substring(index + 1)
-                            onValueChange(updated.trimEnd())
+                    if (typed.isNotEmpty()) {
+                        val padded = value.padEnd(length, ' ')
+                        val updated = padded.substring(0, index) + typed.last() + padded.substring(index + 1)
+                        onValueChange(updated.trimEnd())
+                        if (index < length - 1) {
+                            focusRequesters[index + 1].requestFocus()
                         }
-                        else -> onValueChange(typed.take(length))
+                    } else {
+                        // Deletion case
+                        val padded = value.padEnd(length, ' ')
+                        val updated = padded.substring(0, index) + " " + padded.substring(index + 1)
+                        onValueChange(updated.trimEnd())
                     }
                 },
-                modifier = Modifier.width(48.dp),
+                modifier = Modifier
+                    .width(48.dp)
+                    .focusRequester(focusRequesters[index])
+                    .onKeyEvent { keyEvent ->
+                        if (keyEvent.key == Key.Backspace && digit.isEmpty() && index > 0) {
+                            focusRequesters[index - 1].requestFocus()
+                            true
+                        } else {
+                            false
+                        }
+                    },
                 textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = MaterialTheme.typography.titleMedium.fontSize),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = isError,

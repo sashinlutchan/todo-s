@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,19 +76,23 @@ fun VerifyEmailScreen(
                 onValueChange = viewModel::onCodeChange
             )
 
-            Button(
-                onClick = { viewModel.verifyCode(email) },
-                enabled = !state.isLoading && state.code.length == 6,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                if (state.isLoading) TaskFlowButtonSpinner(modifier = Modifier.size(20.dp))
-                else Text("Verify phone number")
+            LaunchedEffect(state.code) {
+                if (state.code.length == 6 && !state.isLoading) {
+                    viewModel.verifyCode(email)
+                }
             }
 
-            TextButton(onClick = { viewModel.resendCode(email) }) {
+            if (state.isLoading) {
+                androidx.compose.material3.CircularProgressIndicator(
+                    color = colors.accent600,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+
+            TextButton(onClick = { viewModel.resendCode(email) }, enabled = !state.isLoading) {
                 Text("Resend code", color = colors.accent400)
             }
-            TextButton(onClick = onNavigateBack) {
+            TextButton(onClick = onNavigateBack, enabled = !state.isLoading) {
                 Text("Back", color = colors.textSecondary)
             }
         }

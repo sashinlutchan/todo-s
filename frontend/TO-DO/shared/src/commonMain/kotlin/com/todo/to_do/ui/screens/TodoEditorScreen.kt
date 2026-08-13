@@ -167,12 +167,12 @@ fun TodoEditorScreen(
             if (!state.isNew) {
                 OutlinedButton(
                     onClick = { viewModel.toggleComplete() },
-                    enabled = !state.isSaving,
+                    enabled = !state.isSaving && !state.isCompleted,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = if (state.isCompleted) "Mark as Pending" else "Mark as Completed",
-                        color = if (state.isCompleted) colors.textPrimary else colors.accent600
+                        text = if (state.isCompleted) "Completed" else "Mark as Completed",
+                        color = if (state.isCompleted) colors.textSecondary else colors.accent600
                     )
                 }
             }

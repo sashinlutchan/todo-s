@@ -7,13 +7,12 @@ import kotlinx.datetime.toLocalDateTime
 fun Instant.toShortLabel(): String {
     val dt = toLocalDateTime(TimeZone.currentSystemDefault())
     val month = dt.month.name.lowercase().replaceFirstChar { it.uppercase() }.take(3)
-    return "$month ${dt.dayOfMonth}"
+    return "$month ${dt.dayOfMonth}, ${dt.year}"
 }
 
 fun Instant.toDateTimeLabel(): String {
     val dt = toLocalDateTime(TimeZone.currentSystemDefault())
-    val hour12 = if (dt.hour % 12 == 0) 12 else dt.hour % 12
-    val amPm = if (dt.hour < 12) "AM" else "PM"
+    val hour = dt.hour.toString().padStart(2, '0')
     val minute = dt.minute.toString().padStart(2, '0')
-    return "${toShortLabel()}, $hour12:$minute $amPm"
+    return "${toShortLabel()} $hour:$minute"
 }

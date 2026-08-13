@@ -104,7 +104,7 @@ class TodoService(
             throw ForbiddenResourceException()
         }
         val updatedEntity = existing.copy(
-            isCompleted = !existing.isCompleted,
+            isCompleted = true,
             updatedAt = Instant.now()
         )
         val saved = todoRepository.save(updatedEntity).toDomain()
