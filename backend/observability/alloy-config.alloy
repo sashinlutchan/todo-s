@@ -1,0 +1,65 @@
+// Alloy config — receives OTLP data from the todo-backend Java agent and
+// fans it out: logs -> Loki, traces -> Tempo, metrics -> Prometheus.
+
+// ── 1. Receive OTLP data (logs + traces + metrics) ──────────────────────────
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    logs    = [otelcol.processor.attributes.add_labels.input]
+    traces  = [otelcol.exporter.otlp.tempo.input]
+    metrics = [otelcol.exporter.prometheus.default.input]
+  }
+}
+
+// ── 2. Logs: attach Loki label hints ────────────────────────────────────────
+// otelcol.exporter.loki only promotes OTLP attributes to Loki labels when
+// the special hint attributes are present.
+otelcol.processor.attributes "add_labels" {
+  action {
+    key    = "loki.resource.labels"
+    action = "insert"
+    value  = "service.name, deployment.environment"
+  }
+
+  output {
+    logs = [otelcol.exporter.loki.default.input]
+  }
+}
+
+// ── 3. Logs: OTLP -> Loki format -> push ────────────────────────────────────
+otelcol.exporter.loki "default" {
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+// ── 4. Traces: forward to Tempo via OTLP gRPC ───────────────────────────────
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "tempo:4317"
+    tls {
+      insecure = true
+    }
+  }
+}
+
+// ── 5. Metrics: OTLP -> Prometheus remote write ──────────────────────────────
+otelcol.exporter.prometheus "default" {
+  forward_to = [prometheus.remote_write.local.receiver]
+}
+
+prometheus.remote_write "local" {
+  endpoint {
+    url = "http://prometheus:9090/api/v1/write"
+  }
+}
