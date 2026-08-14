@@ -48,7 +48,7 @@ class ProfileViewModelTest {
             vm.load()
             expectState { copy(isLoading = true) }
             expectState { copy(isLoading = false) }
-            expectSideEffect(ProfileSideEffect.ShowError("no profile stubbed"))
+            expectSideEffect(ProfileSideEffect.ShowError("Failed to load profile"))
         }
     }
 

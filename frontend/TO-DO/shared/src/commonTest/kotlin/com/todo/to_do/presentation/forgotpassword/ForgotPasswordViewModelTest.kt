@@ -50,7 +50,7 @@ class ForgotPasswordViewModelTest {
             viewModel.submit()
             expectState { copy(isLoading = true) }
             expectState { copy(isLoading = false) }
-            expectSideEffect(ForgotPasswordSideEffect.ShowError("offline"))
+            expectSideEffect(ForgotPasswordSideEffect.ShowError("Failed to send reset code"))
         }
     }
 }
