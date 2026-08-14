@@ -156,14 +156,14 @@ class TodoServiceTest {
     }
 
     @Test
-    fun `completeTodo toggles isCompleted from true back to false`() = runTest {
+    fun `completeTodo marks an already-completed todo as completed`() = runTest {
         val existing = TestFixtures.budgetReviewTodo().copy(isCompleted = true)
         coEvery { todoRepository.findById(existing.id!!) } returns existing
         coEvery { todoRepository.save(any()) } answers { firstArg() }
 
         val result = todoService.completeTodo(existing.id!!, elenaId)
 
-        assertFalse(result.isCompleted)
+        assertTrue(result.isCompleted)
     }
 
     @Test

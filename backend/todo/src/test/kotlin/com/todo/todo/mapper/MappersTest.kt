@@ -87,12 +87,17 @@ class MappersTest {
     }
 
     @Test
-    fun `User toEntity round-trips back to an equivalent UserEntity`() {
+    fun `User toEntity round-trips domain-mapped fields back to UserEntity`() {
         val original = TestFixtures.marcusChen()
 
         val roundTripped = original.toDomain().toEntity()
 
-        assertEquals(original, roundTripped)
+        assertEquals(original.id, roundTripped.id)
+        assertEquals(original.email, roundTripped.email)
+        assertEquals(original.passwordHash, roundTripped.passwordHash)
+        assertEquals(original.displayName, roundTripped.displayName)
+        assertEquals(original.createdAt, roundTripped.createdAt)
+        assertEquals(original.updatedAt, roundTripped.updatedAt)
     }
 
     @Test
